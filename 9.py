@@ -7,16 +7,14 @@ def run(program, program_input):
     mem = defaultdict(int, enumerate(map(int, program.split(','))))
     ip = rb = 0
     while True:
-        op = mem[ip]
-        modes = [(op // 10 ** i) % 10 for i in range(2, 5)]
-        op = op % 100
+        op = mem[ip] % 100
         if op == 99:
             return
-        size = sizes[op]
-        args = [mem[ip+i] for i in range(1, size)]
+        args = [mem[ip+i] for i in range(1, sizes[op])]
+        modes = [(mem[ip] // 10 ** i) % 10 for i in range(2, 5)]
         reads = [(mem[x], x, mem[x+rb])[m] for x, m in zip(args, modes)]
         writes = [(x, None, x+rb)[m] for x, m in zip(args, modes)]
-        ip += size
+        ip += sizes[op]
         if op == 1:
             mem[writes[2]] = reads[0] + reads[1]
         elif op == 2:
