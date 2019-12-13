@@ -15,10 +15,8 @@ def part1(program):
     return list(intcode.run(program))[2::3].count(2)
 
 def part2(program, watch):
-    buf = []
-    grid = {}
     program[0] = 2
-    score = px = py = 0
+    buf, grid, score, px = [], {}, 0, 0
     gen = intcode.run(program, buf)
     while True:
         try:
@@ -30,13 +28,12 @@ def part2(program, watch):
             continue
         grid[(x, y)] = t
         if t == 3:
-            px, py = x, y
+            px = x
         if t == 4:
             buf.append((x > px) - (x < px))
             if watch:
-                print('\n' * 40)
+                print('\n' * 40, score)
                 render(grid)
-                print(score)
                 time.sleep(0.1)
 
 program = list(map(int, list(fileinput.input())[0].split(',')))
