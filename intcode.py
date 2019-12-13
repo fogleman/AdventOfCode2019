@@ -1,8 +1,10 @@
 from collections import defaultdict
 
-def run(program, program_input):
+def run(program, program_input=None):
     ip = rb = 0
-    mem = defaultdict(int, enumerate(map(int, program.split(','))))
+    if isinstance(program, str):
+        program = map(int, program.split(','))
+    mem = defaultdict(int, enumerate(program))
     while True:
         op = mem[ip] % 100
         if op == 99:
