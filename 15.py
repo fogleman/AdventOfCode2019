@@ -2,24 +2,24 @@ import fileinput
 import heapq
 import intcode
 
+left, right, opposite = [2, 3, 1, 0], [3, 2, 0, 1], [1, 0, 3, 2]
+dxs, dys = [0, 0, -1, 1], [-1, 1, 0, 0]
+
 def traverse(program):
     buf = []
     gen = intcode.run(program, buf)
     send = lambda d: buf.append(d + 1) or next(gen)
-    test = lambda d: send(d) and send([1, 0, 3, 2][d])
-    seq, dx, dy = [0, 3, 1, 2], [0, 0, -1, 1], [-1, 1, 0, 0]
-    i, p, cells, oxygen = 0, (0, 0), set(), None
+    test = lambda d: send(d) and send(opposite[d])
+    d, p, cells, oxygen = 0, (0, 0), set(), None
     while True:
-        l, r = (i - 1) % 4, (i + 1) % 4
-        if test(seq[l]):
-            i = l # turn left if possible
-        elif not test(seq[i]):
-            i = r # else turn right if can't go straight
-        d = seq[i]
+        if test(left[d]):
+            d = left[d] # turn left if possible
+        elif not test(d):
+            d = right[d] # else turn right if can't go straight
         s = send(d)
         if s == 0:
             continue
-        p = (p[0] + dx[d], p[1] + dy[d])
+        p = (p[0] + dxs[d], p[1] + dys[d])
         cells.add(p)
         if s == 2:
             oxygen = p
@@ -33,7 +33,7 @@ def shortest_path(cells, source, target):
         if p == target:
             return d
         seen.add(p)
-        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        for dx, dy in zip(dxs, dys):
             q = (p[0] + dx, p[1] + dy)
             if q in cells and q not in seen:
                 heapq.heappush(queue, (d + 1, q))
