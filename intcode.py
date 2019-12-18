@@ -4,6 +4,8 @@ def run(program, program_input=None):
     ip = rb = 0
     if isinstance(program, str):
         program = map(int, program.split(','))
+    if isinstance(program_input, str):
+        program_input = [ord(x) for x in program_input]
     mem = defaultdict(int, enumerate(program))
     while True:
         op = mem[ip] % 100
